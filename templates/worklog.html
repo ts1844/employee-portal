@@ -1,0 +1,26 @@
+{% extends "employee_layout.html" %}
+
+{% block content %}
+<div class="mb-5">
+    <h2 class="fw-bold text-dark"><i class="bi bi-pencil-square text-primary me-2"></i> Submit Daily Work Log</h2>
+    <p class="text-muted">Document your progress to keep management updated.</p>
+</div>
+
+<div class="card p-5 shadow-sm border-0" style="max-width: 800px;">
+    <form method="POST">
+        <div class="mb-4">
+            <label class="form-label fw-bold text-dark mb-3">What did you accomplish today?</label>
+            <textarea name="work" rows="8" class="form-control form-control-lg bg-light border-0" 
+                      placeholder="• Completed the UI redesign...&#10;• Fixed the database calendar bug...&#10;• Attended the sync meeting..." 
+                      style="box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);" required></textarea>
+        </div>
+        
+        <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
+            <a href="/dashboard" class="text-decoration-none text-muted fw-bold"><i class="bi bi-x-circle me-1"></i> Cancel</a>
+            <button class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm fw-bold">
+                <i class="bi bi-send-fill me-2"></i> Submit Log
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

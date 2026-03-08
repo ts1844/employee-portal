@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manager Portal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { 
+            background: #f8fafc; /* Slightly lighter grey for a cleaner data view */
+            font-family: 'Inter', 'Segoe UI', sans-serif; 
+        }
+        
+        .sidebar {
+            width: 260px; height: 100vh;
+            background: linear-gradient(180deg, #0f172a, #1e293b);
+            position: fixed; padding-top: 30px; color: white;
+            box-shadow: 4px 0px 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .logo {
+            width: 90px; height: 90px; object-fit: contain;
+            background: white; border-radius: 50%; padding: 8px;
+            display: block; margin: auto; margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .portal-title {
+            text-align: center; margin-bottom: 30px;
+            font-weight: 700; color: #f8fafc; font-size: 1.1rem;
+            text-transform: uppercase; letter-spacing: 1.5px;
+        }
+        
+        .sidebar a {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 24px; color: #94a3b8;
+            text-decoration: none; transition: all 0.3s ease;
+            font-size: 15px; font-weight: 500;
+            border-left: 4px solid transparent;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.05); color: #fff;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .content { margin-left: 260px; padding: 40px; }
+        
+        /* Premium Card Styling & Animations */
+        .card {
+            border-radius: 16px; border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+
+        /* Custom Tabs Styling */
+        .nav-tabs .nav-link {
+            color: #64748b; font-weight: 600; border: none; padding: 15px 25px;
+            transition: color 0.3s ease; border-bottom: 3px solid transparent;
+        }
+        .nav-tabs .nav-link.active {
+            color: #0f172a; background: transparent; border-bottom: 3px solid #3b82f6;
+        }
+        .nav-tabs .nav-link:hover:not(.active) { color: #3b82f6; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="logo" alt="Logo">
+        <h5 class="portal-title">Management</h5>
+        
+        <a href="/admin"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+        <a href="/attendance_calendar"><i class="bi bi-calendar-month-fill"></i> Calendar</a>
+        <a href="/register"><i class="bi bi-person-plus-fill"></i> Add Employee</a>
+        
+        <a href="/logout" class="mt-5 text-danger fw-bold"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    </div>
+
+    <div class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show shadow-sm border-0 rounded-3 mb-4" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

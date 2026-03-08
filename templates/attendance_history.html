@@ -1,0 +1,37 @@
+{% extends "employee_layout.html" %}
+
+{% block content %}
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h2 class="fw-bold text-dark"><i class="bi bi-calendar-check text-success me-2"></i> My Attendance History</h2>
+        <p class="text-muted">A complete record of your daily clock-ins.</p>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="py-3 px-4 text-uppercase text-muted small fw-bold tracking-wide">Date</th>
+                    <th class="py-3 px-4 text-uppercase text-muted small fw-bold tracking-wide">Time Recorded</th>
+                    <th class="py-3 px-4 text-uppercase text-muted small fw-bold tracking-wide">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in records %}
+                <tr>
+                    <td class="py-3 px-4 fw-bold text-dark">{{ r.date }}</td>
+                    <td class="py-3 px-4 text-muted"><i class="bi bi-clock me-2"></i>{{ r.time }}</td>
+                    <td class="py-3 px-4"><span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">Present</span></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" class="text-center py-5 text-muted">No attendance records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

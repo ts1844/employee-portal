@@ -1,0 +1,158 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="mb-5">
+    <h2 class="fw-bold text-dark"><i class="bi bi-speedometer2 text-primary me-2"></i> Executive Dashboard</h2>
+    <p class="text-muted fs-6">Real-time overview of company operations and employee activity.</p>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card card-hover h-100 p-4" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-uppercase fw-bold opacity-75 mb-1">Total Employees</h6>
+                    <h2 class="display-5 fw-bold mb-0">{{total_emp}}</h2>
+                </div>
+                <i class="bi bi-people-fill opacity-50" style="font-size: 4rem;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card card-hover h-100 p-4" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-uppercase fw-bold opacity-75 mb-1">Today's Attendance</h6>
+                    <h2 class="display-5 fw-bold mb-0">{{total_att}}</h2>
+                </div>
+                <i class="bi bi-check-circle-fill opacity-50" style="font-size: 4rem;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card card-hover h-100 p-4" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-uppercase fw-bold opacity-75 mb-1">Work Logs Submitted</h6>
+                    <h2 class="display-5 fw-bold mb-0">{{total_logs}}</h2>
+                </div>
+                <i class="bi bi-journal-text opacity-50" style="font-size: 4rem;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 overflow-hidden">
+    <div class="card-header bg-white pt-2 pb-0 border-bottom border-light">
+        <ul class="nav nav-tabs border-bottom-0" id="dashboardTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="emp-tab" data-bs-toggle="tab" data-bs-target="#emp" type="button" role="tab"><i class="bi bi-person-lines-fill me-2"></i>Directory</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="att-tab" data-bs-toggle="tab" data-bs-target="#att" type="button" role="tab"><i class="bi bi-clock-history me-2"></i>Attendance Log</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="work-tab" data-bs-toggle="tab" data-bs-target="#work" type="button" role="tab"><i class="bi bi-list-task me-2"></i>Work Submissions</button>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="card-body p-0">
+        <div class="tab-content" id="dashboardTabsContent">
+            
+            <div class="tab-pane fade show active p-4" id="emp" role="tabpanel">
+                <div class="input-group mb-4 shadow-sm" style="max-width: 400px; border-radius: 8px; overflow: hidden;">
+                    <span class="input-group-text bg-white border-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" id="searchInput" class="form-control border-0 bg-white" placeholder="Search employees...">
+                </div>
+                
+                <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
+                    <table class="table table-hover align-middle mb-0" id="empTable">
+                        <thead class="bg-light sticky-top">
+                            <tr>
+                                <th class="py-3 px-4 text-uppercase text-muted small fw-bold">Employee</th>
+                                <th class="py-3 px-4 text-uppercase text-muted small fw-bold">Email Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for e in employees %}
+                            <tr>
+                                <td class="py-3 px-4 fw-bold text-dark d-flex align-items-center">
+                                    <i class="bi bi-person-circle fs-4 text-primary opacity-75 me-3"></i>
+                                    {{e.name}}
+                                </td>
+                                <td class="py-3 px-4 text-muted">{{e.email}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade p-4" id="att" role="tabpanel">
+                <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light sticky-top">
+                            <tr>
+                                <th class="py-3 px-4 text-uppercase text-muted small fw-bold">Employee Email</th>
+                                <th class="py-3 px-4 text-uppercase text-muted small fw-bold">Date</th>
+                                <th class="py-3 px-4 text-uppercase text-muted small fw-bold">Clock-In Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for a in attendance %}
+                            <tr>
+                                <td class="py-3 px-4 fw-semibold text-dark">{{a.email}}</td>
+                                <td class="py-3 px-4"><span class="badge bg-light text-dark border px-3 py-2 rounded-pill">{{a.date}}</span></td>
+                                <td class="py-3 px-4 text-muted"><i class="bi bi-clock me-2"></i>{{a.time}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade p-4" id="work" role="tabpanel">
+                <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light sticky-top">
+                            <tr>
+                                <th class="py-3 px-4 text-uppercase text-muted small fw-bold">Employee</th>
+                                <th class="py-3 px-4 text-uppercase text-muted small fw-bold" style="width: 50%;">Work Details</th>
+                                <th class="py-3 px-4 text-uppercase text-muted small fw-bold">Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for w in worklogs %}
+                            <tr>
+                                <td class="py-3 px-4 fw-semibold text-dark align-top">{{w.email}}</td>
+                                <td class="py-3 px-4 align-top" style="white-space: pre-wrap; color: #475569;">{{w.work}}</td>
+                                <td class="py-3 px-4 align-top">
+                                    <div class="fw-bold text-dark">{{w.date}}</div>
+                                    <div class="text-muted small mt-1"><i class="bi bi-clock me-1"></i>{{w.time}}</div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    let input = document.getElementById("searchInput");
+    input.addEventListener("keyup", function(){
+        let filter = input.value.toLowerCase();
+        let rows = document.querySelectorAll("#empTable tbody tr");
+        rows.forEach(function(row){
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="fw-bold text-dark">Employee Attendance Calendar</h2>
+    <p class="text-muted">A live overview of all employee clock-ins.</p>
+</div>
+
+<div class="card p-4 shadow-sm border-0" style="border-radius: 12px;">
+    <div id="calendar"></div>
+</div>
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      themeSystem: 'bootstrap5',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      buttonText: { today: 'Today', month: 'Month', week: 'Week', day: 'Day' },
+      
+      // We are now using the fixed iso_start from app.py
+      events: [
+        {% for r in records %}
+        {
+          title: '{{ r.email }}',
+          start: '{{ r.iso_start }}', 
+          color: '#4e73df', // A professional, elegant corporate blue
+          textColor: '#ffffff',
+          allDay: false
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ]
+    });
+    
+    calendar.render();
+  });
+</script>
+{% endblock %}

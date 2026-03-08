@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Portal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { 
+            background: #f4f7f6; 
+            font-family: 'Inter', 'Segoe UI', sans-serif; 
+        }
+        
+        .sidebar {
+            width: 260px; height: 100vh;
+            background: linear-gradient(180deg, #2b5876, #4e4376);
+            position: fixed; padding-top: 30px; color: white;
+            box-shadow: 4px 0px 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+        }
+        
+        .logo {
+            width: 90px; height: 90px; object-fit: contain;
+            background: white; border-radius: 50%; padding: 8px;
+            display: block; margin: auto; margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .portal-title {
+            text-align: center; margin-bottom: 30px;
+            font-weight: 700; color: #f8fafc; font-size: 1.1rem;
+            text-transform: uppercase; letter-spacing: 1.5px;
+        }
+        
+        .sidebar a {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 24px; color: rgba(255,255,255,0.8);
+            text-decoration: none; transition: all 0.3s ease;
+            font-size: 15px; font-weight: 500;
+            border-left: 4px solid transparent;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.1); color: #fff;
+            border-left: 4px solid #fff;
+        }
+        
+        .content { margin-left: 260px; padding: 40px; }
+        
+        /* Premium Card Styling & Animations */
+        .card {
+            border-radius: 16px; border: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        }
+        
+        /* Pop-in animation for success icons */
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        .animate-pop { animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="logo" alt="Logo">
+        <h5 class="portal-title">My Workspace</h5>
+        
+        <a href="/dashboard"><i class="bi bi-house-door-fill"></i> Home</a>
+        <a href="/attendance"><i class="bi bi-clock-fill"></i> Mark Attendance</a>
+        <a href="/worklog"><i class="bi bi-journal-text"></i> Submit Work Log</a>
+        <a href="/attendance_history"><i class="bi bi-calendar-check"></i> My Attendance</a>
+        <a href="/worklog_history"><i class="bi bi-card-list"></i> My Work Logs</a>
+        
+        <a href="/logout" class="mt-5 text-warning fw-bold"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    </div>
+
+    <div class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show shadow-sm border-0 rounded-3 mb-4" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
