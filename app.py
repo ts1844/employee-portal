@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, flash
 import mysql.connector
 from datetime import datetime
+import pytz
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
@@ -122,28 +123,30 @@ def attendance_history():
     return render_template("attendance_history.html", records=formatted_records)
 
 
-@app.route("/worklog", methods=["GET", "POST"])
+@app.route("/worklog", methods=["GET","POST"])
 def worklog():
     if "user" not in session: return redirect("/")
-
+    
     if request.method == "POST":
         work = request.form["work"]
         start_time = request.form["start_time"]
         end_time = request.form["end_time"]
-        now = datetime.now()
+        
+        
+        ist = pytz.timezone('Asia/Kolkata')
+        now = datetime.now(ist)
 
         conn = db()
         cursor = conn.cursor()
-
-
+        
         cursor.execute(
-            "INSERT INTO worklog(email,work,date,time,start_time,end_time) VALUES(%s,%s,%s,%s,%s,%s)",
+            "INSERT INTO worklog(email,work,date,time,start_time,end_time) VALUES(%s,%s,%s,%s,%s,%s)", 
             (session["user"], work, now.date(), now.time(), start_time, end_time)
         )
         conn.commit()
-
+        
         flash("Work log and task duration submitted successfully!", "success")
-        return redirect("/worklog_history")
+        return redirect("/worklog_history") 
 
     return render_template("worklog.html")
 
