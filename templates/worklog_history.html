@@ -2,31 +2,48 @@
 
 {% block content %}
 <div class="mb-4">
-    <h2 class="fw-bold text-dark"><i class="bi bi-card-list text-primary me-2"></i> My Work Logs</h2>
-    <p class="text-muted">Review your past submissions.</p>
+    <h2 class="fw-bold text-dark"><i class="bi bi-card-list text-primary me-2"></i> My Task History</h2>
+    <p class="text-muted">Review your past submissions and recorded task durations.</p>
 </div>
 
-<div class="card shadow-sm border-0 overflow-hidden">
+<div class="card shadow-sm border-0 overflow-hidden" style="border-radius: 16px;">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="bg-light">
                 <tr>
-                    <th class="py-3 px-4 text-uppercase text-muted small fw-bold" style="width: 20%;">Date</th>
-                    <th class="py-3 px-4 text-uppercase text-muted small fw-bold">Work Submitted</th>
+                    <th class="py-3 px-4 text-uppercase text-muted small fw-bold" style="width: 30%;">Date & Time Spent</th>
+                    <th class="py-3 px-4 text-uppercase text-muted small fw-bold">Task Details</th>
                 </tr>
             </thead>
             <tbody>
                 {% for log in logs %}
                 <tr>
-                    <td class="py-3 px-4 align-top">
-                        <div class="fw-bold text-dark">{{ log.date }}</div>
-                        <div class="text-muted small mt-1"><i class="bi bi-clock me-1"></i>{{ log.time }}</div>
+                    <td class="py-4 px-4 align-top border-end border-light">
+                        <div class="fw-bold text-dark fs-6 mb-3">{{ log.date }}</div>
+                        
+                        {% if log.start_time and log.end_time %}
+                            <div class="d-flex flex-column gap-2">
+                                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold w-100 text-start">
+                                    <i class="bi bi-clock me-1"></i> {{ log.start_time }} - {{ log.end_time }}
+                                </span>
+                                
+                                <span class="badge bg-info bg-opacity-10 text-info px-3 py-2 rounded-pill fw-bold w-100 text-start">
+                                    <i class="bi bi-hourglass-split me-1"></i> Time Taken: {{ log.duration_str }}
+                                </span>
+                            </div>
+                        {% else %}
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2 rounded-pill fw-bold w-100 text-start">
+                                <i class="bi bi-clock me-1"></i> Time not recorded
+                            </span>
+                        {% endif %}
+                        
+                        <div class="text-muted small mt-3 opacity-50"><i class="bi bi-check2-all"></i> Logged at {{ log.time }}</div>
                     </td>
-                    <td class="py-3 px-4 text-dark align-top" style="white-space: pre-wrap;">{{ log.work }}</td>
+                    <td class="py-4 px-4 text-dark align-top" style="white-space: pre-wrap; font-size: 0.95rem;">{{ log.work }}</td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="2" class="text-center py-5 text-muted">No work logs submitted yet.</td>
+                    <td colspan="2" class="text-center py-5 text-muted">No task logs submitted yet.</td>
                 </tr>
                 {% endfor %}
             </tbody>
