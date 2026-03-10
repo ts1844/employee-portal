@@ -30,7 +30,7 @@ def login():
         cursor.execute("SELECT * FROM employees WHERE email=%s", (email,))
         user = cursor.fetchone()
 
-        # Check if user exists. We use check_password_hash, but fallback to plain text for your older test accounts!
+       
         if user and (check_password_hash(user["password"], password) or user["password"] == password):
             session["user"] = user["email"]
             session["role"] = user["role"]
@@ -52,15 +52,15 @@ def dashboard():
     cursor = conn.cursor(dictionary=True)
     today = datetime.now().date()
 
-    # 1. Check if the employee is already clocked in today
+    
     cursor.execute("SELECT * FROM attendance WHERE email=%s AND date=%s", (session["user"], today))
     clocked_in = cursor.fetchone() is not None
 
-    # 2. Get their 3 most recent work logs for the activity feed
+  
     cursor.execute("SELECT * FROM worklog WHERE email=%s ORDER BY date DESC, time DESC LIMIT 3", (session["user"],))
     recent_logs = cursor.fetchall()
 
-    # Calculate the duration for each recent log to show on the dashboard
+   
     for log in recent_logs:
         if log.get('start_time') and log.get('end_time'):
             diff = log['end_time'] - log['start_time']
@@ -108,7 +108,7 @@ def attendance_history():
     cursor.execute("SELECT * FROM attendance WHERE email=%s", (session["user"],))
     raw_records = cursor.fetchall()
 
-    # Format the time securely for the JavaScript Calendar
+   
     formatted_records = []
     for r in raw_records:
         time_str = str(r['time'])
@@ -135,7 +135,7 @@ def worklog():
         conn = db()
         cursor = conn.cursor()
 
-        # Insert the new start_time and end_time into the database
+
         cursor.execute(
             "INSERT INTO worklog(email,work,date,time,start_time,end_time) VALUES(%s,%s,%s,%s,%s,%s)",
             (session["user"], work, now.date(), now.time(), start_time, end_time)
@@ -157,21 +157,20 @@ def worklog_history():
     cursor.execute("SELECT * FROM worklog WHERE email=%s ORDER BY date DESC, time DESC", (session["user"],))
     logs = cursor.fetchall()
 
-    # Calculate the duration for each log
+   
     for log in logs:
         if log.get('start_time') and log.get('end_time'):
-            # MySQL 'TIME' columns come back as timedelta objects
+          
             diff = log['end_time'] - log['start_time']
             total_seconds = int(diff.total_seconds())
 
-            # Handle edge case: if a task crosses midnight (e.g., 11 PM to 1 AM)
+            
             if total_seconds < 0:
                 total_seconds += 24 * 3600
 
             hours = total_seconds // 3600
             minutes = (total_seconds % 3600) // 60
 
-            # Format nicely as "2h 15m" or just "45m"
             if hours > 0:
                 log['duration_str'] = f"{hours}h {minutes}m"
             else:
@@ -190,7 +189,7 @@ def admin():
     cursor = conn.cursor(dictionary=True)
     today = datetime.now().date()
 
-    # 1. Fetch raw table data
+  
     cursor.execute("SELECT * FROM employees WHERE role='employee'")
     employees = cursor.fetchall()
 
@@ -200,7 +199,7 @@ def admin():
     cursor.execute("SELECT * FROM worklog ORDER BY date DESC, time DESC")
     worklogs = cursor.fetchall()
 
-    # NEW: Calculate the duration for all global work logs
+    
     for log in worklogs:
         if log.get('start_time') and log.get('end_time'):
             diff = log['end_time'] - log['start_time']
@@ -219,7 +218,6 @@ def admin():
         else:
             log['duration_str'] = None
 
-    # 2. Calculate Today's Real-Time KPIs
     cursor.execute("SELECT COUNT(*) AS total FROM employees WHERE role='employee'")
     total_emp = cursor.fetchone()["total"]
 
@@ -229,7 +227,7 @@ def admin():
     cursor.execute("SELECT COUNT(*) AS total FROM worklog WHERE date=%s", (today,))
     today_logs = cursor.fetchone()["total"]
 
-    # 3. Build a Live Activity Feed for Today
+
     cursor.execute("""
         SELECT 'Clock-In' as type, email, time FROM attendance WHERE date=%s
         UNION ALL
@@ -253,7 +251,7 @@ def register():
         email = request.form["email"]
         password = request.form["password"]
 
-        # Enterprise Security: Hash the password before saving!
+      
         hashed_pw = generate_password_hash(password)
 
         conn = db()
@@ -273,16 +271,16 @@ def attendance_calendar():
     cursor.execute("SELECT * FROM attendance")
     raw_records = cursor.fetchall()
 
-    # FIXING THE CALENDAR BUG: Formatting time so FullCalendar doesn't crash
+
     formatted_records = []
     for r in raw_records:
         time_str = str(r['time'])
-        if len(time_str) == 7:  # If MySQL returns "9:30:00", we make it "09:30:00"
+        if len(time_str) == 7:
             time_str = "0" + time_str
 
         formatted_records.append({
             "email": r["email"],
-            "iso_start": f"{r['date']}T{time_str}"  # Creates perfect format: 2026-03-09T09:30:00
+            "iso_start": f"{r['date']}T{time_str}"
         })
 
     return render_template("attendance_calendar.html", records=formatted_records)
